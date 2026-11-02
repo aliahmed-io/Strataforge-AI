@@ -1,0 +1,77 @@
+name: Strataforge Data Quality Gate
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  schedule:
+    # Run nightly data drift scan at 02:00 UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      dataset_path:
+        description: 'Path to dataset file to audit'
+        required: true
+        default: 'data/daily_transactions.parquet'
+
+permissions:
+  contents: read
+
+jobs:
+  audit-data-quality:
+    name: Audit Data Integrity & Drift
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install Strataforge AI
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install .
+
+      - name: Run Schema & Drift Comparison Against Baseline
+        id: drift-check
+        run: |
+          # Exit Code 0: Data healthy, within statistical tolerances
+          # Exit Code 1: Quality Failure (Breaking schema change or Critical PSI drift >= 0.25)
+          # Exit Code 2: Execution error (Missing file, IO error)
+          strataforge compare ${{ github.event.inputs.dataset_path || 'demo_baseline.csv' }} \
+            --baseline baseline.json \
+            --ci \
+            --no-color
+
+      - name: Validate Quality Rules
+        id: rule-validation
+        if: always() && steps.drift-check.outcome != 'skipped'
+        run: |
+          # Validates types, ranges, allowed categories, uniqueness, null thresholds
+          strataforge validate ${{ github.event.inputs.dataset_path || 'demo_baseline.csv' }} \
+            --config rules.yaml \
+            --no-color
+
+      - name: Generate Standalone HTML Diagnostic Report
+        if: always()
+        run: |
+          strataforge report ${{ github.event.inputs.dataset_path || 'demo_baseline.csv' }} \
+            --baseline baseline.json \
+            --config rules.yaml \
+            --out strataforge-quality-report.html \
+            --no-color
+
+      - name: Archive Data Quality Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: strataforge-data-quality-report
+          path: strataforge-quality-report.html
+          retention-days: 30

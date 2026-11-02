@@ -1,0 +1,32 @@
+# Python & virtualenv
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
+
+# Artifacts
+*.joblib
+*.model
+baseline.json
+report.html
+report_*.html
+demo_*.csv
+demo_*.parquet
