@@ -30,3 +30,5 @@ report.html
 report_*.html
 demo_*.csv
 demo_*.parquet
+scratch_*
+test_tmp*

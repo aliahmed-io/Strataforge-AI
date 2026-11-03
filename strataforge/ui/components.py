@@ -48,7 +48,7 @@ def render_header(console: Console, action_title: str, target_path: str = "") ->
     console.print(
         Panel(
             banner_text,
-            box=box.HORIZONTALS,
+            box=box.ROUNDED,
             border_style="plum",
             padding=(0, 2),
         )
@@ -112,7 +112,15 @@ def render_column_profile_table(console: Console, profile: DatasetProfile) -> No
         distinct_txt = f"{cp.distinct_count:,} ({cp.distinct_percentage:.1f}%)"
 
         if cp.min_val is not None and cp.max_val is not None:
-            dist_desc = f"min: {cp.min_val} | avg: {cp.mean_val} | max: {cp.max_val}"
+            if cp.mean_val is not None:
+                mean_str = (
+                    f"{cp.mean_val:.2f}" if isinstance(cp.mean_val, float) else str(cp.mean_val)
+                )
+                min_str = f"{cp.min_val:.2f}" if isinstance(cp.min_val, float) else str(cp.min_val)
+                max_str = f"{cp.max_val:.2f}" if isinstance(cp.max_val, float) else str(cp.max_val)
+                dist_desc = f"min: {min_str} | avg: {mean_str} | max: {max_str}"
+            else:
+                dist_desc = f"min: {cp.min_val} | max: {cp.max_val}"
         elif cp.top_categories:
             top_3 = [f"{k}:{v}" for k, v in list(cp.top_categories.items())[:3]]
             dist_desc = ", ".join(top_3)
@@ -195,10 +203,19 @@ def render_drift_table(console: Console, metrics: list[DriftMetric]) -> None:
         if dm.notes:
             finding_text.append(f"\n[Note: {dm.notes}]", style="muted")
 
+        stat_display = Text(f"{dm.stat_value:.4f}")
+        if dm.metric_name == "psi":
+            if dm.stat_value >= 0.25:
+                stat_display.append(" [===!]", style="coral")
+            elif dm.stat_value >= 0.10:
+                stat_display.append(" [==--]", style="gold")
+            else:
+                stat_display.append(" [=---]", style="sage")
+
         table.add_row(
             dm.column_name,
             dm.metric_display_name,
-            f"{dm.stat_value:.4f}",
+            stat_display,
             p_val_str,
             get_severity_badge(dm.severity),
             finding_text,
@@ -239,7 +256,15 @@ def render_anomalies_table(
 
     for rec in anomalies[:max_rows]:
         score_style = "coral" if rec.anomaly_score >= 0.70 else "gold"
-        score_txt = Text(f"{rec.anomaly_score:.2f}", style=f"bold {score_style}")
+        score_txt = Text(f"{rec.anomaly_score:.2f} ", style=f"bold {score_style}")
+        if rec.anomaly_score >= 0.85:
+            score_txt.append("[====]", style="coral")
+        elif rec.anomaly_score >= 0.70:
+            score_txt.append("[===.]", style="coral")
+        elif rec.anomaly_score >= 0.50:
+            score_txt.append("[==..]", style="gold")
+        else:
+            score_txt.append("[=...]", style="sage")
 
         feats = [
             f"{f.feature} (z: {f.z_score:+.1f}σ)"
