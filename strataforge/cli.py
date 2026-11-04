@@ -24,6 +24,7 @@ from strataforge.recommendations.engine import generate_recommendations
 from strataforge.recommendations.fix_preview import preview_recommended_fixes
 from strataforge.reporting.html_generator import generate_html_report
 from strataforge.reporting.summary import compute_quality_score
+from strataforge.ui.cockpit import render_pilot_cockpit
 from strataforge.ui.components import (
     render_anomalies_table,
     render_anomaly_detail,
@@ -141,11 +142,15 @@ def compare_cmd(
         ),
     ] = False,
     no_color: Annotated[bool, typer.Option("--no-color", help="Disable colored output.")] = False,
+    compact: Annotated[
+        bool, typer.Option("--compact", help="Render traditional linear table format.")
+    ] = False,
 ) -> None:
     """Detect schema mutations and statistical distribution drift against a baseline."""
     console = create_console(no_color)
     try:
-        render_header(console, "Compare Against Baseline", f"{path.name} vs {baseline.name}")
+        if compact or no_color:
+            render_header(console, "Compare Against Baseline", f"{path.name} vs {baseline.name}")
         with console.status(
             "[plum]Comparing schemas and calculating statistical drift...[/plum]", spinner="dots"
         ):
@@ -190,10 +195,22 @@ def compare_cmd(
                 total_rows=curr_prof.row_count,
             )
 
-        render_kpi_summary(console, curr_prof, score)
-        render_schema_changes_table(console, schema_changes)
-        render_drift_table(console, drift_metrics)
-        render_recommendations(console, recs)
+        if not compact and not no_color:
+            render_pilot_cockpit(
+                console=console,
+                profile=curr_prof,
+                score=score,
+                schema_changes=schema_changes,
+                drift_metrics=drift_metrics,
+                anomalies=[],
+                recommendations=recs,
+                baseline_path=str(baseline),
+            )
+        else:
+            render_kpi_summary(console, curr_prof, score)
+            render_schema_changes_table(console, schema_changes)
+            render_drift_table(console, drift_metrics)
+            render_recommendations(console, recs)
 
         if fix_preview:
             preview_df, applied = preview_recommended_fixes(curr_df, recs)
@@ -396,11 +413,15 @@ def scan_cmd(
     ] = False,
     ci: Annotated[bool, typer.Option("--ci", help="CI mode: exit 1 on critical findings.")] = False,
     no_color: Annotated[bool, typer.Option("--no-color", help="Disable colored output.")] = False,
+    compact: Annotated[
+        bool, typer.Option("--compact", help="Render traditional linear table format.")
+    ] = False,
 ) -> None:
     """Analyze a dataset and print a comprehensive quality report."""
     console = create_console(no_color)
     try:
-        render_header(console, "Comprehensive Quality Scan", str(path))
+        if compact or no_color:
+            render_header(console, "Comprehensive Quality Scan", str(path))
         with console.status(
             "[plum]Scanning dataset, evaluating distributions & anomalies...[/plum]", spinner="dots"
         ):
@@ -475,19 +496,33 @@ def scan_cmd(
                 anomalies=anomaly_records,
             )
 
-        render_kpi_summary(console, prof, score)
-        render_column_profile_table(console, prof)
+        if not compact and not no_color:
+            render_pilot_cockpit(
+                console=console,
+                profile=prof,
+                score=score,
+                schema_changes=schema_changes,
+                drift_metrics=drift_metrics,
+                anomalies=anomaly_records,
+                validation_findings=validation_findings,
+                recommendations=recs,
+                baseline_path=str(baseline) if baseline else "",
+                config_path=str(config) if config else "",
+            )
+        else:
+            render_kpi_summary(console, prof, score)
+            render_column_profile_table(console, prof)
 
-        if schema_changes:
-            render_schema_changes_table(console, schema_changes)
-        if drift_metrics:
-            render_drift_table(console, drift_metrics)
-        if anomaly_records:
-            render_anomalies_table(console, anomaly_records, max_rows=5)
-        if validation_findings:
-            render_validation_table(console, validation_findings)
+            if schema_changes:
+                render_schema_changes_table(console, schema_changes)
+            if drift_metrics:
+                render_drift_table(console, drift_metrics)
+            if anomaly_records:
+                render_anomalies_table(console, anomaly_records, max_rows=5)
+            if validation_findings:
+                render_validation_table(console, validation_findings)
 
-        render_recommendations(console, recs)
+            render_recommendations(console, recs)
 
         if fix_preview:
             preview_df, applied = preview_recommended_fixes(df, recs)
@@ -505,6 +540,32 @@ def scan_cmd(
     except Exception as exc:
         console.print(f"[coral]Scan Error: {exc}[/coral]")
         raise typer.Exit(code=ExitCode.SYSTEM_ERROR.value) from exc
+
+
+@app.command("cockpit")
+def cockpit_cmd(
+    path: Annotated[
+        Path, typer.Argument(help="Dataset to inspect in Pilot-style terminal cockpit.")
+    ],
+    baseline: Annotated[
+        Path | None,
+        typer.Option("--baseline", "-b", help="Optional baseline for drift comparison."),
+    ] = None,
+    config: Annotated[
+        Path | None, typer.Option("--config", "-c", help="Optional rules.yaml to validate.")
+    ] = None,
+    no_color: Annotated[bool, typer.Option("--no-color", help="Disable colored output.")] = False,
+) -> None:
+    """Launch the Pilot-style high-density terminal cockpit dashboard."""
+    scan_cmd(
+        path=path,
+        baseline=baseline,
+        config=config,
+        fix_preview=False,
+        ci=False,
+        no_color=no_color,
+        compact=False,
+    )
 
 
 @app.command("report")
