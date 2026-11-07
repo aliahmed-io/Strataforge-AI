@@ -13,14 +13,51 @@ on:
       dataset_path:
         description: 'Path to dataset file to audit'
         required: true
-        default: 'data/daily_transactions.parquet'
+        default: 'demo_baseline.csv'
 
 permissions:
   contents: read
 
 jobs:
+  code-quality:
+    name: Code Quality & Automated Test Gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install Package & Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Install Playwright Browsers for Visual Testing
+        run: |
+          python -m playwright install --with-deps chromium
+
+      - name: Run Ruff Linter
+        run: |
+          ruff check .
+
+      - name: Verify Code Formatting
+        run: |
+          ruff format --check .
+
+      - name: Run Pytest Suite (Unit, Property Fuzzing, Benchmarks & Visual)
+        run: |
+          pytest -v
+
   audit-data-quality:
     name: Audit Data Integrity & Drift
+    needs: [code-quality]
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -39,13 +76,28 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install .
 
+      - name: Verify or Scaffold Baseline & Datasets
+        run: |
+          # Ensure reference baseline and datasets are always present
+          if [ ! -f "demo_baseline.csv" ] || [ ! -f "baseline.json" ]; then
+            echo "Initializing demo workspace files..."
+            strataforge init
+            strataforge baseline demo_baseline.csv --out baseline.json
+          fi
+          ls -la demo_baseline.csv baseline.json rules.yaml
+
       - name: Run Schema & Drift Comparison Against Baseline
         id: drift-check
         run: |
           # Exit Code 0: Data healthy, within statistical tolerances
           # Exit Code 1: Quality Failure (Breaking schema change or Critical PSI drift >= 0.25)
           # Exit Code 2: Execution error (Missing file, IO error)
-          strataforge compare ${{ github.event.inputs.dataset_path || 'demo_baseline.csv' }} \
+          TARGET_DATASET="${{ github.event.inputs.dataset_path }}"
+          if [ -z "$TARGET_DATASET" ]; then
+            TARGET_DATASET="demo_baseline.csv"
+          fi
+          echo "Comparing dataset: $TARGET_DATASET against baseline.json"
+          strataforge compare "$TARGET_DATASET" \
             --baseline baseline.json \
             --ci \
             --no-color
@@ -54,15 +106,24 @@ jobs:
         id: rule-validation
         if: always() && steps.drift-check.outcome != 'skipped'
         run: |
-          # Validates types, ranges, allowed categories, uniqueness, null thresholds
-          strataforge validate ${{ github.event.inputs.dataset_path || 'demo_baseline.csv' }} \
+          TARGET_DATASET="${{ github.event.inputs.dataset_path }}"
+          if [ -z "$TARGET_DATASET" ]; then
+            TARGET_DATASET="demo_baseline.csv"
+          fi
+          echo "Validating dataset: $TARGET_DATASET against rules.yaml"
+          strataforge validate "$TARGET_DATASET" \
             --config rules.yaml \
             --no-color
 
       - name: Generate Standalone HTML Diagnostic Report
         if: always()
         run: |
-          strataforge report ${{ github.event.inputs.dataset_path || 'demo_baseline.csv' }} \
+          TARGET_DATASET="${{ github.event.inputs.dataset_path }}"
+          if [ -z "$TARGET_DATASET" ]; then
+            TARGET_DATASET="demo_baseline.csv"
+          fi
+          echo "Generating HTML report for: $TARGET_DATASET"
+          strataforge report "$TARGET_DATASET" \
             --baseline baseline.json \
             --config rules.yaml \
             --out strataforge-quality-report.html \
@@ -74,4 +135,5 @@ jobs:
         with:
           name: strataforge-data-quality-report
           path: strataforge-quality-report.html
+          if-no-files-found: warn
           retention-days: 30

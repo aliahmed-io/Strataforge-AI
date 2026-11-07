@@ -25,10 +25,8 @@ htmlcov/
 # Artifacts
 *.joblib
 *.model
-baseline.json
 report.html
 report_*.html
-demo_*.csv
-demo_*.parquet
+strataforge-quality-report.html
 scratch_*
 test_tmp*

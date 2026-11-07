@@ -1,0 +1,287 @@
+{
+  "version": "1.0",
+  "engine_version": "0.1.0",
+  "created_at": "2026-11-03T00:28:31.903563+00:00",
+  "dataset_source": "demo_baseline.csv",
+  "row_count": 1000,
+  "column_count": 8,
+  "profile": {
+    "dataset_path": "in-memory",
+    "file_format": "dataframe",
+    "row_count": 1000,
+    "column_count": 8,
+    "memory_bytes": 106352,
+    "duplicate_count": 0,
+    "duplicate_percentage": 0.0,
+    "columns": {
+      "transaction_id": {
+        "name": "transaction_id",
+        "inferred_type": "string",
+        "native_dtype": "str",
+        "total_count": 1000,
+        "null_count": 0,
+        "null_percentage": 0.0,
+        "distinct_count": 1000,
+        "distinct_percentage": 100.0,
+        "is_unique": true,
+        "is_nullable": false,
+        "sample_values": [
+          "TX-100000",
+          "TX-100001",
+          "TX-100002"
+        ],
+        "min_val": null,
+        "max_val": null,
+        "mean_val": null,
+        "std_val": null,
+        "quantiles": null,
+        "top_categories": {
+          "TX-100000": 1,
+          "TX-100001": 1,
+          "TX-100002": 1,
+          "TX-100003": 1,
+          "TX-100004": 1,
+          "TX-100005": 1,
+          "TX-100006": 1,
+          "TX-100007": 1,
+          "TX-100008": 1,
+          "TX-100009": 1
+        },
+        "category_frequencies": {
+          "TX-100000": 0.001,
+          "TX-100001": 0.001,
+          "TX-100002": 0.001,
+          "TX-100003": 0.001,
+          "TX-100004": 0.001,
+          "TX-100005": 0.001,
+          "TX-100006": 0.001,
+          "TX-100007": 0.001,
+          "TX-100008": 0.001,
+          "TX-100009": 0.001
+        }
+      },
+      "user_id": {
+        "name": "user_id",
+        "inferred_type": "integer",
+        "native_dtype": "int64",
+        "total_count": 1000,
+        "null_count": 0,
+        "null_percentage": 0.0,
+        "distinct_count": 366,
+        "distinct_percentage": 36.6,
+        "is_unique": false,
+        "is_nullable": false,
+        "sample_values": [
+          "135",
+          "409",
+          "361"
+        ],
+        "min_val": 101.0,
+        "max_val": 499.0,
+        "mean_val": 300.704,
+        "std_val": 115.4622,
+        "quantiles": {
+          "p5": 121.0,
+          "p25": 199.0,
+          "p50": 302.0,
+          "p75": 403.0,
+          "p95": 479.04999999999995
+        },
+        "top_categories": {},
+        "category_frequencies": {}
+      },
+      "amount": {
+        "name": "amount",
+        "inferred_type": "float",
+        "native_dtype": "float64",
+        "total_count": 1000,
+        "null_count": 0,
+        "null_percentage": 0.0,
+        "distinct_count": 958,
+        "distinct_percentage": 95.8,
+        "is_unique": false,
+        "is_nullable": false,
+        "sample_values": [
+          "105.63",
+          "47.22",
+          "63.34"
+        ],
+        "min_val": 5.01,
+        "max_val": 301.06,
+        "mean_val": 52.9873,
+        "std_val": 34.3011,
+        "quantiles": {
+          "p5": 15.791,
+          "p25": 29.61,
+          "p50": 44.79,
+          "p75": 65.465,
+          "p95": 118.19149999999996
+        },
+        "top_categories": {},
+        "category_frequencies": {}
+      },
+      "category": {
+        "name": "category",
+        "inferred_type": "categorical",
+        "native_dtype": "str",
+        "total_count": 1000,
+        "null_count": 0,
+        "null_percentage": 0.0,
+        "distinct_count": 5,
+        "distinct_percentage": 0.5,
+        "is_unique": false,
+        "is_nullable": false,
+        "sample_values": [
+          "grocery",
+          "entertainment",
+          "travel"
+        ],
+        "min_val": null,
+        "max_val": null,
+        "mean_val": null,
+        "std_val": null,
+        "quantiles": null,
+        "top_categories": {
+          "retail": 360,
+          "grocery": 298,
+          "travel": 141,
+          "entertainment": 114,
+          "utility": 87
+        },
+        "category_frequencies": {
+          "retail": 0.36,
+          "grocery": 0.298,
+          "travel": 0.141,
+          "entertainment": 0.114,
+          "utility": 0.087
+        }
+      },
+      "status": {
+        "name": "status",
+        "inferred_type": "categorical",
+        "native_dtype": "str",
+        "total_count": 1000,
+        "null_count": 0,
+        "null_percentage": 0.0,
+        "distinct_count": 4,
+        "distinct_percentage": 0.4,
+        "is_unique": false,
+        "is_nullable": false,
+        "sample_values": [
+          "settled",
+          "pending",
+          "declined"
+        ],
+        "min_val": null,
+        "max_val": null,
+        "mean_val": null,
+        "std_val": null,
+        "quantiles": null,
+        "top_categories": {
+          "settled": 881,
+          "pending": 82,
+          "declined": 27,
+          "refunded": 10
+        },
+        "category_frequencies": {
+          "settled": 0.881,
+          "pending": 0.082,
+          "declined": 0.027,
+          "refunded": 0.01
+        }
+      },
+      "customer_age": {
+        "name": "customer_age",
+        "inferred_type": "integer",
+        "native_dtype": "int64",
+        "total_count": 1000,
+        "null_count": 0,
+        "null_percentage": 0.0,
+        "distinct_count": 57,
+        "distinct_percentage": 5.7,
+        "is_unique": false,
+        "is_nullable": false,
+        "sample_values": [
+          "52",
+          "67",
+          "65"
+        ],
+        "min_val": 18.0,
+        "max_val": 74.0,
+        "mean_val": 45.32,
+        "std_val": 16.1982,
+        "quantiles": {
+          "p5": 21.0,
+          "p25": 31.0,
+          "p50": 45.0,
+          "p75": 59.0,
+          "p95": 71.0
+        },
+        "top_categories": {},
+        "category_frequencies": {}
+      },
+      "risk_score": {
+        "name": "risk_score",
+        "inferred_type": "float",
+        "native_dtype": "float64",
+        "total_count": 1000,
+        "null_count": 0,
+        "null_percentage": 0.0,
+        "distinct_count": 861,
+        "distinct_percentage": 86.1,
+        "is_unique": false,
+        "is_nullable": false,
+        "sample_values": [
+          "0.0502",
+          "0.2533",
+          "0.1225"
+        ],
+        "min_val": 0.0013,
+        "max_val": 0.6733,
+        "mean_val": 0.1581,
+        "std_val": 0.1082,
+        "quantiles": {
+          "p5": 0.023370000000000002,
+          "p25": 0.07505,
+          "p50": 0.13615,
+          "p75": 0.2207,
+          "p95": 0.36960499999999996
+        },
+        "top_categories": {},
+        "category_frequencies": {}
+      },
+      "created_at": {
+        "name": "created_at",
+        "inferred_type": "datetime",
+        "native_dtype": "str",
+        "total_count": 1000,
+        "null_count": 0,
+        "null_percentage": 0.0,
+        "distinct_count": 1000,
+        "distinct_percentage": 100.0,
+        "is_unique": true,
+        "is_nullable": false,
+        "sample_values": [
+          "2026-01-02 05:21:11",
+          "2026-01-11 16:26:39",
+          "2026-01-13 09:34:12"
+        ],
+        "min_val": "2026-01-01T01:20:59",
+        "max_val": "2026-01-30T23:29:26",
+        "mean_val": null,
+        "std_val": null,
+        "quantiles": null,
+        "top_categories": {},
+        "category_frequencies": {}
+      }
+    },
+    "created_at": "2026-11-03T00:28:31.903563+00:00"
+  },
+  "model_artifact_path": "baseline.model.joblib",
+  "numerical_features": [
+    "user_id",
+    "amount",
+    "customer_age",
+    "risk_score"
+  ]
+}
