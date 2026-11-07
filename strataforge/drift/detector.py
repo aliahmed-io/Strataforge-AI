@@ -46,13 +46,12 @@ def detect_drift(
         # Determine feature type
         if column_types and col in column_types:
             ftype = column_types[col]
+        elif pd.api.types.is_bool_dtype(b_series) or pd.api.types.is_bool_dtype(c_series):
+            ftype = DataType.BOOLEAN
+        elif pd.api.types.is_numeric_dtype(b_series) and pd.api.types.is_numeric_dtype(c_series):
+            ftype = DataType.FLOAT if "float" in str(b_series.dtype) else DataType.INTEGER
         else:
-            if pd.api.types.is_numeric_dtype(b_series) and pd.api.types.is_numeric_dtype(c_series):
-                ftype = DataType.FLOAT if "float" in str(b_series.dtype) else DataType.INTEGER
-            elif pd.api.types.is_bool_dtype(b_series):
-                ftype = DataType.BOOLEAN
-            else:
-                ftype = DataType.CATEGORICAL
+            ftype = DataType.CATEGORICAL
 
         # 1. Missing value rate delta check
         b_null_pct = float(b_series.isna().mean() * 100.0)

@@ -163,8 +163,13 @@ def validate_dataset(df: pd.DataFrame, rules: QualityRules) -> ValidationResult:
         if col_rule.type is not None:
             total_checks += 1
             type_ok = inferred == col_rule.type
-            # Allow compatible widening (e.g. integer allowed as float)
+            # Allow compatible widening (e.g. integer allowed as float, string/categorical)
             if not type_ok and col_rule.type == DataType.FLOAT and inferred == DataType.INTEGER:
+                type_ok = True
+            elif not type_ok and {col_rule.type, inferred} == {
+                DataType.STRING,
+                DataType.CATEGORICAL,
+            }:
                 type_ok = True
 
             if type_ok:

@@ -1,333 +1,266 @@
+<p align="center">
+  <img src="assets/terminal_cockpit.png" alt="Strataforge AI Terminal Cockpit" width="950" style="border-radius: 8px; box-shadow: 0 12px 40px rgba(0,0,0,0.6);" />
+</p>
+
 # STRATAFORGE AI
 
-[![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-[![Tests: Pytest](https://img.shields.io/badge/tests-43%20passed-brightgreen.svg)](tests/)
+<p align="center">
+  <strong>Terminal-Native Intelligent Data-Quality Engine & Statistical Sentinel</strong><br />
+  <em>Deterministic contracts, empirical distribution drift, multivariate Isolation Forests, and autonomous remediation for mission-critical data pipelines.</em>
+</p>
 
-> **A terminal-native intelligent data-quality analysis engine.**  
-> Catch silent schema drift, distribution shifts, missing-value spikes, corrupted types, and multivariate anomalies before they break production ML pipelines, downstream analytics, and customer-facing reports.
+<p align="center">
+  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/Python-3.12%2B-blue.svg?style=flat-square&logo=python&logoColor=white" alt="Python 3.12+" /></a>
+  <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json&style=flat-square" alt="Ruff" /></a>
+  <a href="tests/"><img src="https://img.shields.io/badge/Tests-59%20Passed%20(100%25)-91C8A8.svg?style=flat-square&logo=pytest&logoColor=white" alt="Tests: 59 Passed" /></a>
+  <a href="https://hypothesis.readthedocs.io/"><img src="https://img.shields.io/badge/Fuzzing-Hypothesis%20Verified-E9AC74.svg?style=flat-square" alt="Hypothesis Fuzzing" /></a>
+  <a href="https://playwright.dev/"><img src="https://img.shields.io/badge/UI%20Audit-Playwright%20Tested-B892FF.svg?style=flat-square&logo=playwright&logoColor=white" alt="Playwright Tested" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-E77770.svg?style=flat-square" alt="License: MIT" /></a>
+</p>
 
 ---
 
-## 1. Overview & Architecture
+## Executive Overview
 
-Strataforge AI is a local, terminal-native CLI utility engineered for software engineers, data engineers, and ML practitioners. It operates strictly in the terminal and offline file environments—requiring **no web servers, no external databases, and no cloud dependencies**.
+**Strataforge AI** is a high-throughput, terminal-native CLI engineered for software engineers, data engineers, and machine learning teams. It inspects datasets (`CSV`, `JSONL`, `Parquet`) directly in terminal and CI environments to uncover breaking schema mutations, silent statistical drift, missing-value spikes, and multivariate anomalies **before** they compromise downstream models, applications, or financial reports.
 
-The engine combines **deterministic schema validation**, **statistical hypothesis testing**, and **multivariate machine learning** to detect, diagnose, explain, and propose actionable remediations for corrupted data.
+Operating strictly offline with zero external dependencies—**no web servers, no client databases, no cloud daemons, and zero telemetry tracking**—Strataforge pairs deterministic assertion gates with rigorous statistical hypothesis tests (Population Stability Index, Kolmogorov-Smirnov) and scikit-learn Isolation Forests to diagnose problems with absolute reproducibility.
+
+---
+
+## Key Capabilities
+
+- **Semantic Schema Inference & Evolution**: Infers semantic types (`integer`, `float`, `boolean`, `datetime`, `categorical`, `string`) and separates breaking mutations (dropped columns, narrowing type changes, nullability regressions) from non-breaking widening.
+- **Statistical Distribution Drift**: Computes Population Stability Index ($\text{PSI}$) and two-sample Kolmogorov-Smirnov ($D, p\text{-value}$) with sample-size safeguards against trivial false-positives at scale ($N > 10,000$) and low-power traps ($N < 30$).
+- **Multivariate ML Anomaly Detection**: Trains an uncorrupted reference Isolation Forest on baseline features using median imputation and `RobustScaler`. Flags unusual multivariate record combinations and computes z-score feature deviation attributions for root-cause diagnosis.
+- **Actionable Remediation Engine**: Synthesizes verified Python/pandas code snippets to resolve detected corruptions. Use `--fix-preview` to simulate data transformations without touching input files.
+- **Pilot Developer Cockpit TUI**: Renders an Awwwards-caliber terminal interface with custom plum/copper/sage/coral color geometry, live KPI tiles, diagnostic tables, and severity badges.
+- **Standalone Zero-Server HTML Report**: Exports self-contained, responsive HTML audits featuring SVG radial health gauges, client-side filtering, and payload drilldowns without external CDN requests.
+- **Strict CI/CD Enforcement**: Clean deterministic exit codes (`0`: Pass, `1`: Quality Violation, `2`: System Error) with `--no-color` and `--compact` flags for GitHub Actions.
+
+---
+
+## Architectural Data Flow
 
 ```mermaid
 flowchart TD
-    subgraph Ingestion["1. Multi-Format Data Ingestion"]
-        A[Input Dataset: CSV / Parquet / JSONL] --> B[strataforge.core.loader]
-        B -->|Chunked Streaming / PyArrow| C[Standardized DataFrame Stream]
+    subgraph Ingestion["1. Multi-Format Streaming Ingestion"]
+        A["Input Dataset (CSV / Parquet / JSONL)"] --> B["strataforge.core.loader"]
+        B -->|"Chunked Streaming / PyArrow Engine"| C["Standardized Vectorized DataFrame Stream"]
     end
 
-    subgraph AnalyticalEngine["2. Diagnostic & Analytical Core"]
-        C --> D[Schema Inference Engine<br/>• Semantic Type Inference<br/>• Breaking vs Non-Breaking Diff]
-        C --> E[Statistical Profiler & Duplicates<br/>• Running Moments & Quantiles<br/>• Exact & Key Duplicates]
-        C --> F[Distribution Drift Engine<br/>• Population Stability Index<br/>• Kolmogorov-Smirnov Test<br/>• Sample-Size Safeguards]
-        C --> G[Isolation Forest ML Engine<br/>• Robust Imputation & Scaling<br/>• Multivariate Anomaly Scoring<br/>• Z-Score Feature Attribution]
-        C --> H[Rule Assertion Engine<br/>• rules.yaml Validation<br/>• Constraints, Regex, Ranges]
+    subgraph CoreEngine["2. Analytical Core Engine"]
+        C --> D["Schema Inference Engine<br/>• Semantic Type Inference<br/>• Breaking vs Non-Breaking Diff"]
+        C --> E["Statistical Profiler & Duplicates<br/>• Continuous & Discrete Quantiles<br/>• Exact & Primary-Key Matching"]
+        C --> F["Distribution Drift Engine<br/>• Population Stability Index (PSI)<br/>• Kolmogorov-Smirnov Test (KS)<br/>• Small & Large N Safeguards"]
+        C --> G["Isolation Forest ML Engine<br/>• Reference Preprocessing Pipe<br/>• Multivariate Anomaly Scoring<br/>• Per-Feature Z-Score Attribution"]
+        C --> H["Quality Rule Engine<br/>• rules.yaml Assertions<br/>• Ranges, Regex, Missing Thresholds"]
     end
 
-    subgraph Remediation["3. Recommendations & Reporting"]
-        D & E & F & G & H --> I[Intelligent Recommendation Engine]
-        I --> J[Non-Destructive Fix Preview]
-        I --> K[Composite Health Index 0-100 & Letter Grade]
+    subgraph Remediation["3. Diagnostic Synthesis & Remediation"]
+        D & E & F & G & H --> I["Intelligent Recommendation Engine"]
+        I --> J["Deterministic Python/Pandas Code Generator"]
+        I --> K["Composite Health Index (0-100 & Letter Grade)"]
     end
 
-    subgraph Delivery["4. Delivery Interfaces"]
-        K --> L[Rich Terminal TUI<br/>• Brand Palette<br/>• KPI Tiles & Tables<br/>• Diagnostic Cards]
-        K --> M[Self-Contained HTML Report<br/>• Zero CDN Dependencies<br/>• Interactive Filtering<br/>• Offline Capable]
-        K --> N[CI/CD Automation<br/>• Deterministic Exit Codes<br/>• GitHub Actions Gate]
+    subgraph Delivery["4. Delivery Surfaces"]
+        K --> L["Pilot Terminal Cockpit (Rich TUI)<br/>• Copper/Plum/Sage Palette<br/>• Interactive Diagnostic Tables"]
+        K --> M["Standalone HTML Report<br/>• Zero External CDN Dependencies<br/>• Fully Responsive & Offline"]
+        K --> N["CI/CD Automation Gate<br/>• Exit 0 / 1 / 2 Codes<br/>• Native GitHub Actions Support"]
     end
 ```
 
 ---
 
-## 2. Core Commands Reference
+## Terminal Cockpit Experience
 
-Strataforge provides 9 commands with argument validation, helpful messages, and deterministic exit codes:
+Strataforge AI implements a purposeful terminal design language tailored for modern developers:
 
-| Command | Syntax | Primary Job |
-| :--- | :--- | :--- |
-| **`scan`** | `strataforge scan PATH [--baseline B] [--config C]` | Comprehensive quality audit: profiles, checks drift, flags anomalies, validates rules, outputs recommendations. |
-| **`profile`** | `strataforge profile PATH [--chunk-size N]` | Displays inferred schema, missing values, duplicates, and distribution quantiles. |
-| **`baseline`** | `strataforge baseline PATH --out baseline.json` | Creates a versioned schema snapshot and trains reference Isolation Forest model. |
-| **`compare`** | `strataforge compare PATH --baseline baseline.json` | Detects breaking schema changes, PSI drift, KS test shifts, and null rate spikes. |
-| **`anomalies`** | `strataforge anomalies PATH [--baseline B] [--top N]` | Runs multivariate Isolation Forest detection on continuous features and explains outliers. |
-| **`validate`** | `strataforge validate PATH --config rules.yaml` | Applies explicit schema contracts, unique keys, ranges, allowed categories, and regex rules. |
-| **`explain`** | `strataforge explain PATH --row ROW_ID` | Deep-dives into a specific anomalous record, showing z-score feature attributions. |
-| **`report`** | `strataforge report PATH --format html --out out.html` | Exports a self-contained, standalone HTML quality report. |
-| **`init`** | `strataforge init [--out-dir .]` | Scaffolds `rules.yaml` and seeded reproducible demonstration datasets. |
+<p align="center">
+  <img src="assets/terminal_cockpit.png" alt="Strataforge AI Cockpit View" width="900" style="border-radius: 8px;" />
+</p>
 
-### Global Flags
-- `--no-color`: Disables ANSI terminal coloring (adheres to standard `NO_COLOR` environment variable).
-- `--fix-preview`: Simulates proposed non-destructive remediations without touching original files.
-- `--ci`: Enforces strict CI exit codes (exits with code 1 if any critical checks fail).
+### Palette & Visual Identity
+- **Cockpit Base**: `#17151F` (Deep Plum/Slate)
+- **Secondary Surfaces**: `#272039`
+- **Accent Highlight**: `#E9AC74` (Warm Copper)
+- **Success Safe**: `#91C8A8` (Sage Green)
+- **Error Breach**: `#E77770` (Coral Red)
+- **Warning Drift**: `#ECC06C` (Muted Gold)
 
 ---
 
-## 3. Installation & Quickstart
+## Standalone Interactive HTML Reports
 
-### Prerequisites
-- Python 3.12 or newer compatible release.
+Generate self-contained diagnostic artifacts for executive sharing, compliance audits, or pipeline artifacts:
 
 ```bash
-# Clone the repository
-git clone https://github.com/strataforge/strataforge.git
-cd strataforge
+strataforge report data/current.parquet --baseline baseline.json --config rules.yaml --out audit_report.html
+```
 
-# Create and activate virtual environment
+<p align="center">
+  <img src="assets/report_desktop.png" alt="Strataforge Desktop HTML Report" width="900" style="border-radius: 8px; margin-bottom: 16px;" />
+</p>
+
+<p align="center">
+  <img src="assets/report_mobile.png" alt="Strataforge Mobile Responsive Report" width="380" style="border-radius: 8px;" />
+</p>
+
+- **Zero-Server Requirement**: Operates directly via `file://` protocol.
+- **Embedded Visuals**: Built-in SVG radial health gauges with dynamic stroke animations.
+- **Client-Side Filtering**: Live instant table search and severity tabs (`Critical`, `Warnings`, `Passed`).
+- **Interactive Inspection**: Expand anomaly rows to inspect raw JSON record payloads and divergent z-scores.
+
+---
+
+## Installation & Quickstart
+
+### Prerequisites
+- Python 3.12 or newer.
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/aliahmed-io/Strataforge-AI.git
+cd Strataforge-AI
+
+# 2. Create virtual environment
 python -m venv .venv
-source .venv/bin/activate  # On Windows: .\.venv\Scripts\activate
+# On Linux/macOS:
+source .venv/bin/activate
+# On Windows:
+.\.venv\Scripts\activate
 
-# Install in editable mode
+# 3. Install in editable mode
 pip install -e .
 ```
 
-### 5-Minute Tour
+### 5-Minute Guided Tour
 
 ```bash
-# 1. Initialize configuration and seeded demo datasets
+# Initialize demo workspace with sample baseline and corrupted datasets
 strataforge init
 
-# 2. Profile clean baseline dataset
+# Run quick profile to inspect inferred schema and distributions
 strataforge profile demo_baseline.csv
 
-# 3. Save reference baseline snapshot and fit anomaly detector
+# Snapshot reference schema and train baseline Isolation Forest model
 strataforge baseline demo_baseline.csv --out baseline.json
 
-# 4. Compare modified dataset against baseline
+# Launch the pilot terminal cockpit audit against incoming data
+strataforge cockpit demo_current.csv --baseline baseline.json --config rules.yaml
+
+# Run statistical drift and schema comparison
 strataforge compare demo_current.csv --baseline baseline.json
 
-# 5. Run multivariate anomaly detection
+# Detect and explain multivariate outliers
 strataforge anomalies demo_current.csv --baseline baseline.json --top 5
 
-# 6. Explain specific anomaly row #5
+# Deep-dive into specific outlier row attribution
 strataforge explain demo_current.csv --row 5 --baseline baseline.json
 
-# 7. Validate explicit data quality rules
+# Validate strict pipeline rules
 strataforge validate demo_current.csv --config rules.yaml
 
-# 8. Export standalone HTML report
+# Generate static HTML report
 strataforge report demo_current.csv --baseline baseline.json --config rules.yaml --out report.html
 ```
 
 ---
 
-## 4. Schema Inference & Evolution Engine
+## CLI Command Reference
 
-The schema inference engine evaluates column distributions using statistical and pattern heuristics, mapping them to normalized semantic data types:
+All commands support argument validation, clear error empathy, and structured exit codes:
 
-| Semantic Type | Detection Criteria | Examples |
+| Command | Usage | Description |
 | :--- | :--- | :--- |
-| **`integer`** | Native int64 or int32, or string column parsing strictly as integers. | `142`, `-80`, `10005` |
-| **`float`** | Native float64 or string column with fractional floating-point values. | `19.99`, `3.14159` |
-| **`boolean`** | Native bool, or string sets matching `{"true", "false", "yes", "no", "0", "1"}`. | `True`, `"yes"`, `"false"` |
-| **`datetime`** | Native timestamp or ISO-8601, RFC-3339, or standard calendar formats. | `"2026-01-01 14:30:00"` |
-| **`categorical`** | Distinct ratio $< 0.05$ or unique count $\le 50$ with $\ge 20$ observations. | `"retail"`, `"grocery"`, `"travel"` |
-| **`string`** | High-cardinality text tokens or unstructured alphanumeric strings. | Customer notes, descriptions |
+| **`cockpit`** | `strataforge cockpit PATH [--baseline B] [--config C]` | Interactive terminal cockpit with live telemetry, KPI grid, and categorized findings. |
+| **`scan`** | `strataforge scan PATH [--baseline B] [--config C]` | Standard quality audit: schema check, drift analysis, anomaly score, and rule assertions. |
+| **`profile`** | `strataforge profile PATH [--chunk-size N]` | Displays inferred types, null counts, duplicate ratios, and distribution quantiles. |
+| **`baseline`** | `strataforge baseline PATH --out baseline.json` | Creates serialized schema snapshot and fits baseline Isolation Forest preprocessor. |
+| **`compare`** | `strataforge compare PATH --baseline baseline.json` | Identifies breaking schema mutations, continuous/discrete PSI drift, and KS statistics. |
+| **`anomalies`** | `strataforge anomalies PATH [--baseline B] [--top N]` | Scores observations using multivariate Isolation Forest and ranks unusual records. |
+| **`explain`** | `strataforge explain PATH --row ROW_ID [--baseline B]` | Explains flagged row via z-score deviations and feature contributions. |
+| **`validate`** | `strataforge validate PATH --config rules.yaml` | Applies explicit schema rules, unique keys, regex checks, and range bounds. |
+| **`report`** | `strataforge report PATH [--format html] [--out PATH]` | Compiles an offline, self-contained interactive HTML audit report. |
+| **`init`** | `strataforge init [--out-dir PATH]` | Scaffolds `rules.yaml` and seeded demo datasets for rapid verification. |
 
-### Breaking vs. Non-Breaking Evolution Rules
-
-| Schema Mutation | Classification | Reasoning |
-| :--- | :---: | :--- |
-| **Removed Column** | **Breaking** | Downstream queries expecting this column will fail immediately. |
-| **Incompatible Type Change** | **Breaking** | e.g. `string` -> `integer` or `float` -> `integer` causes parsing errors. |
-| **Nullability Regression** | **Breaking** | Previously 0% null column now has missing values, violating non-null assumptions. |
-| **Compatible Widening** | **Non-Breaking** | Widening `integer` -> `float` retains precision and mathematical compatibility. |
-| **Added Column** | **Non-Breaking** | New nullable column preserves existing downstream schemas. |
-| **Column Order Shift** | **Non-Breaking** | Key-addressed schemas remain stable; flagged as informational. |
+### Global Flags
+- `--no-color`: Disables ANSI formatting for clean plain-text log files (or set `NO_COLOR=1`).
+- `--compact`: Renders compact ASCII tables optimized for terminal recording or simple logs.
+- `--fix-preview`: Simulates proposed data cleaning steps without altering original files.
 
 ---
 
-## 5. Statistical Drift Detection Methodology
+## Deterministic CI/CD Integration
 
-Strataforge detects distribution drift by comparing empirical reference distributions against incoming data batches.
-
-### Population Stability Index (PSI)
-For continuous numerical features, empirical bins are computed from baseline deciles:
-$$\text{PSI} = \sum_{i=1}^{k} \left( Q_i - P_i \right) \cdot \ln\left( \frac{Q_i}{P_i} \right)$$
-where $P_i$ is the baseline proportion and $Q_i$ is the current batch proportion.
-- **$\text{PSI} < 0.10$**: Stable distribution (No action needed, `PASS`).
-- **$0.10 \le \text{PSI} < 0.25$**: Moderate distribution drift (`WARNING`).
-- **$\text{PSI} \ge 0.25$**: Significant distribution drift (`CRITICAL FAILURE`).
-
-For discrete categories, categorical PSI is evaluated across all observed category partitions, flagging newly emerging categories.
-
-### Kolmogorov-Smirnov (KS) Test & Sample-Size Safeguards
-Two-sample Kolmogorov-Smirnov test compares cumulative empirical distributions:
-$$D = \sup_x |F_{\text{baseline}}(x) - F_{\text{current}}(x)|$$
-- **Small Sample Safeguard ($N < 30$)**: Warns that statistical power is low; avoids false confidence in non-significant p-values.
-- **Large Sample Safeguard ($N > 10,000$)**: When $N$ is massive, $p$-values approach zero even for trivial shifts. Strataforge couples the $p$-value with the $D$-statistic effect size:
-  - $D < 0.05$: Negligible real-world impact (prevents false alerts).
-  - $D \ge 0.15$: Moderate or large effect size.
-
----
-
-## 6. Machine Learning Anomaly Detection
-
-Strataforge employs **scikit-learn Isolation Forest** for multivariate anomaly detection:
-
-1. **Preprocessing Fitted Strictly on Reference Data**:
-   - `SimpleImputer(strategy="median")` fits median on clean reference baseline only.
-   - `RobustScaler()` uses median and interquartile range (IQR) to scale features without distortion from extreme outliers.
-2. **Normalized Anomaly Index**:
-   - Raw decision function scores ($-\infty$ to $+\infty$) are mapped to a calibrated $[0.0, 1.0]$ index, where $\ge 0.70$ designates high-risk multivariate outliers.
-3. **Z-Score Feature Deviation Attribution**:
-   - For every flagged record, the engine computes $z = \frac{x_i - \mu_{\text{baseline}}}{\sigma_{\text{baseline}}}$ for each feature to diagnose exactly which variables drove the decision.
-4. **Diagnostic Disclaimer**:
-   > **Statistical Disclaimer:** An anomaly indicates that this record deviates significantly from empirical reference correlation patterns. An anomaly is **not automatically an error**; legitimate rare events (e.g. VIP purchases) can score as anomalies. Do not discard records without domain context.
-
----
-
-## 7. Rules Configuration Schema (`rules.yaml`)
-
-```yaml
-version: 1
-dataset_name: "production_transactions"
-
-dataset:
-  min_rows: 100
-  max_rows: 1000000
-  max_duplicate_pct: 0.0  # Zero tolerance for duplicate rows
-  primary_key: ["transaction_id"]
-
-columns:
-  transaction_id:
-    type: string
-    required: true
-    nullable: false
-    unique: true
-    regex: "^TX-[0-9]{5,10}$"
-
-  user_id:
-    type: integer
-    required: true
-    nullable: false
-    range:
-      min: 1
-      max: 2147483647
-
-  amount:
-    type: float
-    required: true
-    nullable: false
-    range:
-      min: 0.01
-      max: 100000.00
-    max_missing_pct: 0.0
-
-  category:
-    type: categorical
-    required: true
-    nullable: false
-    allowed_values: ["retail", "grocery", "travel", "entertainment", "utility"]
-
-drift:
-  psi_warning: 0.10
-  psi_critical: 0.25
-  ks_p_value_threshold: 0.01
-  max_missing_delta_pct: 5.0
-
-anomalies:
-  contamination: 0.05
-  max_anomaly_pct: 5.0
-
-fail_on:
-  - breaking_schema
-  - validation_errors
-  - critical_drift
-  - high_anomalies
-```
-
----
-
-## 8. Terminal Design & Visual Identity
-
-Strataforge adheres to a purposeful aesthetic inspired by developer cockpit dashboards:
-
-- **Terminal Background**: `#17151F` (Deep Plum/Slate)
-- **Secondary Surfaces**: `#272039`
-- **Copper Accent**: `#E9AC74`
-- **Success Sage**: `#91C8A8`
-- **Error Coral**: `#E77770`
-- **Warning Gold**: `#ECC06C`
-
-### Clean Text Badges
-- ` PASS ` (Sage on dark emerald background)
-- ` WARN ` (Gold on dark amber background)
-- ` CRIT ` (Coral on dark crimson background)
-- ` INFO ` (Lavender on dark plum background)
-
----
-
-## 9. CI/CD Integration & Deterministic Exit Codes
+Strataforge uses explicit exit codes designed to gate CI/CD pipelines:
 
 | Exit Code | Classification | Meaning |
 | :---: | :--- | :--- |
-| **`0`** | **SUCCESS** | All data checks, schema diffs, drift calculations, and rules passed. |
-| **`1`** | **DATA_FAILURE** | Quality assertions failed (breaking changes, critical PSI drift $\ge 0.25$, rule violations). |
-| **`2`** | **SYSTEM_ERROR** | File not found, permission denied, invalid YAML syntax, or execution exception. |
+| **`0`** | **PASS** | Dataset is healthy; all schema checks, drift thresholds, and rules satisfied. |
+| **`1`** | **QUALITY_VIOLATION** | Data quality failure detected (breaking schema mutation, critical PSI $\ge 0.25$, or rule breach). |
+| **`2`** | **SYSTEM_ERROR** | Runtime error, missing file path, invalid YAML formatting, or IO exception. |
 
-### GitHub Actions Workflow Example
+### GitHub Actions Workflow
 
-Included at `.github/workflows/data_quality.yml`:
+Add `.github/workflows/data_quality.yml`:
+
 ```yaml
-name: Strataforge Data Quality Gate
+name: Data Quality Gate
 on: [push, pull_request]
 
 jobs:
-  audit-data:
+  strataforge-audit:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install .
-      - name: Gate on Drift and Schema
-        run: strataforge compare data/current.parquet --baseline baseline.json --ci --no-color
-      - name: Validate Business Rules
+      - name: Install Strataforge
+        run: pip install .
+      - name: Gate on Schema & Statistical Drift
+        run: strataforge compare data/current.parquet --baseline baseline.json --no-color
+      - name: Validate Contract Rules
         if: always()
         run: strataforge validate data/current.parquet --config rules.yaml --no-color
 ```
 
 ---
 
-## 10. Performance Benchmarks
+## Rigorous Testing & Benchmarks
 
-Measured on a standard workstation running Python 3.12:
+The Strataforge test suite combines **59 automated tests** across 4 verification layers:
 
-| Dataset Size | Profile (In-Memory) | Profile (Chunked) | Memory Delta (Streaming) | Drift Analysis (PSI+KS) | ML Anomaly (Fit+Score) |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| **10,000 Rows** | 25 ms | 26 ms | +1.0 MB | 344 ms | 276 ms |
-| **50,000 Rows** | 73 ms | 72 ms | 0.0 MB | 808 ms | 739 ms |
-| **100,000 Rows** | 141 ms | 76 ms | 0.0 MB | 814 ms | 736 ms |
+1. **Unit & Integration Suite**: Schema inference, drift algorithms, ML model persistence, and CLI commands.
+2. **Property-Based Fuzzing (Hypothesis)**: Proves mathematical invariants for PSI ($\ge 0$), KS statistic bounds ($[0, 1]$), schema stability, and anomaly score boundaries ($[0, 1]$) under randomized edge-case arrays.
+3. **Black-Box User Experience Tests**: Verifies error empathy, absence of unhandled tracebacks, and exit code precision.
+4. **Visual & DOM Audits (Playwright)**: Launches headless Chromium to verify offline file loading, zero JavaScript errors, and mobile responsive layout.
 
-Full methodology, resource limits, and streaming trade-offs documented in [benchmarks/results.md](benchmarks/results.md).
+### Microbenchmark SLAs (10,000 Rows)
 
----
+```
+Name (time in ms)                                Min      Mean     Median    OPS
+---------------------------------------------------------------------------------
+test_benchmark_profiling_10k_rows              19.4 ms  22.5 ms  22.7 ms   44.3
+test_benchmark_drift_detection_10k_rows        26.8 ms  30.7 ms  30.2 ms   32.5
+test_benchmark_isolation_forest_scoring       160.8 ms 166.3 ms 165.6 ms    6.0
+```
 
-## 11. Testing & Code Quality
-
-Strataforge enforces strict linting and a comprehensive test suite covering schema inference, drift, ML, CLI exit codes, and reports.
-
+Run test suite locally:
 ```bash
-# Run 43 automated unit & integration tests
+# Full test suite with benchmarks
 pytest -v
 
-# Run strict Ruff linter sweep
+# Strict lint sweep
 ruff check .
 
-# Check PEP 8 / Ruff formatting
+# Code formatting verification
 ruff format --check .
 ```
 
 ---
 
-## 12. License
+## License
 
-Distributed under the MIT License. See `LICENSE` for details.
+Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for complete details.
